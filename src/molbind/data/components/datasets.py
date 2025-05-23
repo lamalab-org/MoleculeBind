@@ -143,7 +143,7 @@ class IrDataset(Dataset):
 
     def __getitem__(self, index: int) -> dict:
         # convert to tensor
-        ir = torch.tensor(self.ir[index], dtype=torch.float32)[100:1700]
+        ir = torch.tensor(self.ir[index], dtype=torch.float32)[100:1700].unsqueeze(0)
         return {
             self.central_modality: [i[index] for i in self.central_modality_data],
             self.other_modality: ir,
@@ -214,16 +214,13 @@ class hNmrDataset(Dataset):
         self,
         data: list[list[float]],
         vec_len: int = 512,
-        architecture: str = "mlp",
+        architecture: str = "cnn",
         **kwargs,
     ) -> None:
         self.h_nmr = data
         self.vec_len = vec_len
         self.central_modality = kwargs["central_modality"]
-        if architecture == "cnn":
-            self.other_modality = "h_nmr_cnn"
-        else:
-            self.other_modality = "h_nmr"
+        self.other_modality = "h_nmr"
         self.central_modality_data = kwargs["central_modality_data"]
         self.architecture = architecture
 
@@ -279,3 +276,29 @@ class StringDatasetEmbedding(Dataset):
             torch.tensor(self.data[idx][0]),
             torch.tensor(self.data[idx][1]),
         )
+
+
+class HSQCDataset(Dataset):
+    def __init__(
+        self,
+        data: list[list[float]],
+        vec_len: int = 512,
+        min_value: float = 0,
+        max_value: float = 300,
+        **kwargs,
+    ) -> None:
+        self.hsqc = data
+        self.vec_len = vec_len
+        self.min_value = min_value
+        self.max_value = max_value
+        self.central_modality = kwargs["central_modality"]
+        self.other_modality = "hsqc"
+        self.central_modality_data = kwargs["central_modality_data"]
+
+    def __len__(self):
+        return len(self.hsqc)
+
+    def __getitem__(self, index: int) -> dict:
+        # input shape (512, 512) with 1 channel
+        # convert to tensor
+        return torch.tensor(self.hsqc[index], dtype=torch.float32).unsqueeze(0)
