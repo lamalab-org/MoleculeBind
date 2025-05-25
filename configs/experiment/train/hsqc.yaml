@@ -9,35 +9,27 @@ model:
   encoders:
     smiles:
       freeze_encoder: False
-    h_nmr:
-      input_dims: [10000, 1024, 512, 256]
-      output_dims: [256, 512, 1024, 10000]
-      latent_dim: 256
+    hsqc:
       freeze_encoder: False
 
   projection_heads:
     h_nmr:
-      dims: [256, "${model.embedding_size}"]
+      dims: [512, "${model.embedding_size}"]
       activation: LeakyReLU
     h_nmr_freeze: False
+    h_nmr_is_on: True
     smiles_freeze: False
-    cnmr_freeze: False
-    ir_freeze: False
 
 data:
   modalities:
     - h_nmr
-    - c_nmr
-    - ir
   modalities_to_read:
     - h_nmr
-    - c_nmr
-    - ir
   batch_size: 128
-  dataset_path: "${paths.data_dir}/spectra_129k_hnmr_detailed.parquet"
+  dataset_path: jablonkagroup/spectral-dataset
 
 trainer:
   num_nodes: 1
-  gpus_per_node: 4
+  gpus_per_node: 6
 
-run_id: "ir_cnmr_hnmr_detailed_simulated"
+run_id: "hnmr"

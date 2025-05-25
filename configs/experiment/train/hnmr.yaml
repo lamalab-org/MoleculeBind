@@ -9,8 +9,15 @@ model:
   encoders:
     smiles:
       freeze_encoder: False
+    h_nmr:
+      freeze_encoder: False
+
   projection_heads:
+    h_nmr:
+      dims: [512, "${model.embedding_size}"]
+      activation: LeakyReLU
     h_nmr_freeze: False
+    h_nmr_is_on: True
     smiles_freeze: False
 
 data:
@@ -19,10 +26,10 @@ data:
   modalities_to_read:
     - h_nmr
   batch_size: 128
-  dataset_path: "${paths.data_dir}/spectra_129k.parquet"
+  dataset_path: jablonkagroup/spectral-dataset
 
 trainer:
   num_nodes: 1
-  gpus_per_node: 4
+  gpus_per_node: 6
 
-run_id: "hnmr_simulated"
+run_id: "hnmr"

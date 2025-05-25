@@ -9,27 +9,35 @@ model:
   encoders:
     smiles:
       freeze_encoder: False
-    h_nmr_cnn:
+    h_nmr:
       freeze_encoder: False
 
   projection_heads:
-    h_nmr_cnn:
+    h_nmr:
       dims: [512, "${model.embedding_size}"]
       activation: LeakyReLU
-    h_nmr_cnn_freeze: False
-    h_nmr_cnn_is_on: True
+    h_nmr_freeze: False
+    h_nmr_is_on: True
     smiles_freeze: False
 
 data:
   modalities:
-    - h_nmr_cnn
-  modalities_to_read:
-    - h_nmr_cnn
-  batch_size: 128
-  dataset_path: "${paths.data_dir}/spectra_dataset_0_40_45_end_reduced.parquet"
+    - h_nmr
+  valid_frac: 1
+  batch_size: 1024
+  dataset_path: "${paths.data_dir}/h_nmr_luc_10_simple.parquet"
+
+ckpt_path: "${paths.checkpoints_dir}/hnmr_20250522_1121/best_model.ckpt"
 
 trainer:
   num_nodes: 1
-  gpus_per_node: 4
+  gpus_per_node: 1
 
-run_id: "hnmr_simulated_detailed_cnn_architecture_large_dataset"
+top_k:
+  - 1
+  - 2
+  - 5
+  - 20
+
+run_id: "luc_nmrium_hnmr_10_simple"
+embeddings_path: luc_nmrium_hnmr_10_simple

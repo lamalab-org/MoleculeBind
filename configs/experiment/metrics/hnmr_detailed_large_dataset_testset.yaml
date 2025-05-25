@@ -7,16 +7,18 @@ defaults:
 model:
   embedding_size: 512
   encoders:
-    h_nmr:
-      input_dims: [10000, 2048, 1024, 512]
-      output_dims: [512, 2048, 1024, 10000]
-      latent_dim: 512
+    smiles:
+      freeze_encoder: False
+    h_nmr_cnn:
       freeze_encoder: False
 
   projection_heads:
-    h_nmr:
+    h_nmr_cnn:
       dims: [512, "${model.embedding_size}"]
       activation: LeakyReLU
+    h_nmr_cnn_freeze: False
+    h_nmr_cnn_is_on: True
+    smiles_freeze: False
 
 data:
   modalities:
@@ -27,7 +29,7 @@ data:
   batch_size: 1024
   dataset_path: "${paths.data_dir}/simulated_spectra_test_set.parquet"
 
-ckpt_path: "${paths.checkpoints_dir}/hnmr_simulated_detailed_20240920_1211/best_model.ckpt"
+ckpt_path: "${paths.checkpoints_dir}/hnmr_simulated_detailed_cnn_architecture_large_dataset_20241015_2122/best_model.ckpt"
 
 trainer:
   num_nodes: 1
@@ -39,5 +41,5 @@ top_k:
   - 5
   - 20
 
-run_id: "metrics_hnmr_simulated_detailed"
-embeddings_path: hnmr_simulated_embeddings_detailed
+run_id: "metrics_hnmr_cnn_simulated_large_dataset"
+embeddings_path: 7_hnmr_simulated_detailed_cnn_architecture_large_dataset
